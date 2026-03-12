@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero card">
+        <div>
+          <p class="eyebrow">OpenFish Python Branch</p>
+          <h1>Browser screenshot analysis with a Python-first backend</h1>
+          <p class="hero-copy">
+            Capture a monitor, window, or tab in the browser, send the image to
+            the Python backend, and render a structured VLM plan directly in the
+            interface.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button class="primary-button" id="analyze-button" type="button">
+            Capture And Analyze
+          </button>
+          <p class="hint-text">
+            To capture a specific monitor, choose <code>Entire Screen</code> in
+            the browser picker and select the display you want. The backend runs
+            in Python; the browser still handles screen capture.
+          </p>
+        </div>
+      </section>
+
+      <section class="card error-card hidden" id="error-panel">
+        <div class="section-heading">
+          <h3>Error</h3>
+          <span id="error-code"></span>
+        </div>
+        <p id="error-message"></p>
+        <p class="error-detail hidden" id="error-detail"></p>
+        <pre class="debug-panel hidden" id="error-raw"></pre>
+      </section>
+
+      <section class="empty-state card" id="empty-state">
+        <h2>No screenshot analyzed yet</h2>
+        <p>
+          This branch rewrites OpenFish mainly in Python. The browser handles
+          capture, while FastAPI owns the application flow, prompt orchestration,
+          VLM request logic, and schema validation.
+        </p>
+      </section>
+
+      <section class="content-grid hidden" id="results">
+        <section class="card preview-card">
+          <div class="section-heading">
+            <h3>Screenshot Preview</h3>
+            <span id="preview-meta"></span>
+          </div>
+          <img
+            class="preview-image"
+            id="preview-image"
+            alt="Captured browser screenshot"
+          />
+        </section>
+
+        <div class="results-column">
+          <div class="plan-grid">
+            <section class="card plan-summary">
+              <div class="section-heading">
+                <h3>Plan Suggestion</h3>
+                <span class="confidence-pill" id="plan-confidence"></span>
+              </div>
+              <p class="summary-text" id="plan-summary"></p>
+              <p class="current-view">
+                Current view:
+                <strong id="plan-current-view"></strong>
+              </p>
+            </section>
+
+            <section class="card">
+              <h3>Goals</h3>
+              <ul class="bullet-list" id="plan-goals"></ul>
+            </section>
+
+            <section class="card">
+              <h3>Next Steps</h3>
+              <ul class="bullet-list" id="plan-next-steps"></ul>
+            </section>
+
+            <section class="card">
+              <h3>Risks</h3>
+              <ul class="bullet-list" id="plan-risks"></ul>
+            </section>
+          </div>
+
+          <section class="card">
+            <div class="section-heading">
+              <h3>Raw JSON Debug</h3>
+              <span>Model output</span>
+            </div>
+            <pre class="debug-panel" id="raw-json"></pre>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

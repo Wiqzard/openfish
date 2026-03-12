@@ -1,146 +1,154 @@
 # 🐟 OpenFish - Personal Ai Poker Assistant
 
-OpenFish is a browser-based visual agent workspace for building a personal poker assistant. The current baseline focuses on a simple but useful first loop: capture a browser tab or window, send that image to a vision-language model, and turn the response into a structured next-step plan inside the UI.
+This branch rewrites OpenFish mainly in Python.
 
-## Overview
+OpenFish is a browser-based visual agent workspace for building a personal poker assistant in API-poor poker environments. The current baseline focuses on a tight first loop:
 
-This project is aimed at poker environments that do not expose convenient APIs. Instead of starting with direct automation, OpenFish starts visually:
+1. Capture a browser tab, window, or monitor
+2. Send the screenshot through a Python backend to a VLM
+3. Parse a strict JSON response
+4. Render a clear plan in the UI
 
-- capture a poker table or related interface
-- analyze it with a VLM
-- extract a structured plan
-- keep the loop easy to inspect, debug, and improve
+The browser still handles screen capture because web capture APIs must run client-side, but the application flow, prompt orchestration, validation, and VLM integration now live mainly in Python.
 
-The current version is intentionally narrow. It is a foundation for a future personal AI poker assistant, not yet a live autonomous poker bot.
+## What Changed On `codex/python_dev`
 
-## Current Capabilities
-
-- Browser-native capture flow for a selected monitor, window, or tab
-- Screenshot preview directly in the app
-- OpenAI-compatible VLM request flow
-- Strict JSON schema validation with `zod`
-- Raw response debug panel for fast iteration
-- Clear error handling for capture, network, timeout, and schema failures
-- Mock mode for local development without a live model
-
-## Product Direction
-
-OpenFish is being built in stages.
-
-### Stage 1: Visual Planning Baseline
-
-- Capture a browser tab or window
-- Send the screenshot to a VLM
-- Receive a structured suggestion
-- Render the result clearly in the UI
-
-### Stage 2: Observation Workspace
-
-- Capture history
-- Saved sessions and transcripts
-- Prompt presets
-- Better visual debugging and replay
-
-### Stage 3: Poker-Specific Intelligence
-
-- Environment adapters for poker clients
-- Richer observation schemas
-- Table-state interpretation
-- Later action planning and safer automation layers
+- React/Vite frontend replaced with a lightweight static browser UI
+- FastAPI now serves the app and owns the `/api/analyze` workflow
+- VLM request handling moved into Python with `httpx`
+- JSON schema validation moved into Python with `pydantic`
+- Tests now run with `pytest`
 
 ## Tech Stack
 
-- React
-- Vite
-- TypeScript
+- Python 3.12+
+- FastAPI
+- Jinja2
+- Pydantic
+- HTTPX
 - Browser Media Capture APIs
-- Zod
-- Vitest
+- Pytest
 
 ## Quick Start
 
-### 1. Install dependencies
+### 1. Create a virtual environment
 
 ```bash
-npm install
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-### 2. Start the app
+### 2. Install dependencies
 
 ```bash
-npm run dev
+pip install -e ".[dev]"
 ```
 
-Open the local Vite URL shown in the terminal, usually:
+### 3. Start the server
 
 ```bash
-http://127.0.0.1:5173
+uvicorn app.main:app --reload
 ```
 
-### 3. Use the baseline flow
+Then open:
 
-1. Click `Capture And Analyze`
-2. Choose the browser monitor, window, or tab to capture
-3. Let OpenFish generate a structured plan suggestion
-4. Review the screenshot preview, parsed plan, and raw JSON output
+```bash
+http://127.0.0.1:8000
+```
 
 ## Environment Configuration
 
-Copy `.env.example` to `.env` and configure as needed:
+Copy `.env.example` to `.env` and set values as needed:
 
 ```bash
-VITE_VLM_BASE_URL=mock
-VITE_VLM_API_KEY=
-VITE_VLM_MODEL=gpt-4.1-mini
-VITE_VLM_TIMEOUT_MS=20000
+VLM_BASE_URL=mock
+VLM_API_KEY=
+VLM_MODEL=gpt-4.1-mini
+VLM_TIMEOUT_MS=20000
 ```
 
 ### Notes
 
 - `mock` mode works without a live model.
-- Live browser requests require the VLM endpoint to allow CORS.
-- The app expects an OpenAI-compatible `/chat/completions` interface.
+- The backend expects an OpenAI-compatible `/chat/completions` interface.
+- Because the VLM request is now server-side, you no longer need CORS for local development in this branch.
 - To capture a specific monitor, choose `Entire Screen` in the browser picker and then select the display you want.
 
-## Scripts
+## Current Capabilities
 
-```bash
-npm run dev
-npm test
-npm run build
-npm run clean
+- Browser-native capture flow for a selected monitor, window, or tab
+- Python-backed `/api/analyze` endpoint
+- Screenshot preview directly in the app
+- Structured plan rendering
+- Raw response debug panel
+- Clear error handling for capture, network, timeout, and schema failures
+- Mock mode for local development
+
+## API Contract
+
+### Request
+
+```json
+{
+  "image": {
+    "dataUrl": "data:image/png;base64,...",
+    "width": 1440,
+    "height": 900,
+    "surfaceType": "monitor"
+  }
+}
 ```
 
-## Response Contract
+### Response
 
-The current baseline expects the model to return strict JSON in this shape:
-
-```ts
-type PlanSuggestion = {
-  summary: string
-  current_view: string
-  goals: string[]
-  next_steps: string[]
-  risks: string[]
-  confidence: number
+```json
+{
+  "image": {
+    "dataUrl": "data:image/png;base64,...",
+    "width": 1440,
+    "height": 900,
+    "surfaceType": "monitor"
+  },
+  "plan": {
+    "summary": "string",
+    "current_view": "string",
+    "goals": ["string"],
+    "next_steps": ["string"],
+    "risks": ["string"],
+    "confidence": 0.65
+  },
+  "rawResponse": "{...}"
 }
 ```
 
 ## Project Structure
 
 ```text
-src/
-  renderer/    Browser UI, capture flow, and VLM client
-  shared/      Shared contracts, parser logic, and error shapes
+app/
+  main.py           FastAPI entrypoint and routes
+  config.py         Environment-backed settings
+  errors.py         App-level error shape
+  models.py         Pydantic request and response models
+  parser.py         JSON extraction and plan parsing
+  vlm_client.py     OpenAI-compatible VLM client
+  static/           Browser JS and CSS
+  templates/        Server-rendered HTML
+tests/
+  test_api.py
+  test_parser.py
 ```
 
-## Why This Exists
+## Running Tests
 
-Many poker tools and clients are visually rich but API-poor. OpenFish is designed to become a practical bridge between visual environments and agent workflows, starting with a minimal baseline that is easy to reason about and extend.
+```bash
+pytest
+```
 
-## Roadmap
+## Why This Branch Exists
 
-- Improve capture workflows and saved sessions
-- Add environment adapters for specific poker clients
-- Expand from generic planning into poker-aware observation
-- Add richer analysis and controlled action layers later
+This branch is the Python-first version of OpenFish. It is useful if you want:
+
+- backend-controlled VLM integrations
+- Python-native validation and orchestration
+- an easier path toward Python-based poker reasoning or simulation
+- less frontend framework overhead in the baseline

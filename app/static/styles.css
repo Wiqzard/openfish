@@ -27,8 +27,12 @@ select {
   font: inherit;
 }
 
-#root {
-  min-height: 100vh;
+code {
+  font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+}
+
+.hidden {
+  display: none !important;
 }
 
 .app-shell {
@@ -78,7 +82,7 @@ select {
   font-family: "IBM Plex Serif", Georgia, serif;
   font-size: clamp(2rem, 3vw, 3.5rem);
   line-height: 1.05;
-  max-width: 10ch;
+  max-width: 12ch;
 }
 
 .hero-copy {

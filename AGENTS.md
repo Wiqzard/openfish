@@ -3,64 +3,68 @@
 This file is shared context for agents working in this repo. Read it before making changes, and update it whenever an important fact, decision, or constraint is learned.
 
 ## Repo Purpose
-- Build a browser-based visual-agent interface for poker-related exploration, starting with a narrow baseline.
-- Current product goal: click one button, choose a browser tab or window to capture, send the screenshot to a VLM endpoint, and render a structured plan suggestion back in the UI.
-- Intended GitHub repo identity: `openfish` with the display title `🐟 OpenFish - Personal Ai Poker Assistant`.
-- This repo is not yet a live poker-playing bot. The first release is a visual planning assistant.
+- This branch rewrites OpenFish mainly in Python.
+- Current product goal: click one button, choose a browser monitor, tab, or window to capture, send the screenshot through a Python backend to a VLM endpoint, and render a structured plan suggestion back in the UI.
+- GitHub repo identity remains `openfish` with the display title `🐟 OpenFish - Personal Ai Poker Assistant`.
+- This repo is not yet a live poker-playing bot. The current release is still a visual planning assistant baseline.
 
 ## Current Stack
-- React + Vite + TypeScript for the browser UI.
+- FastAPI for the application server and API routes.
+- Jinja2 templates plus lightweight browser JavaScript for the UI.
 - Browser Media Capture APIs for screenshot collection.
-- `zod` for runtime validation of VLM responses and captured image payloads.
-- Vitest for unit tests.
+- `pydantic` for runtime validation of requests and VLM responses.
+- `pytest` for tests.
 
 ## Architecture Summary
-- `src/renderer`: React UI, browser capture flow, and VLM client logic.
-- `src/shared`: shared contracts, parser logic, and error shapes.
-- Current capture implementation uses `navigator.mediaDevices.getDisplayMedia()`, so the user must approve a browser picker and choose the tab or window to analyze.
-  - The app now explicitly hints for monitor selection by setting `displaySurface: "monitor"` and `monitorTypeSurfaces: "include"`, but the browser still controls the final picker and the user still chooses the specific screen.
+- `app/main.py`: FastAPI entrypoint, page route, healthcheck, and `/api/analyze`.
+- `app/vlm_client.py`: OpenAI-compatible VLM client in Python.
+- `app/parser.py`: strict JSON extraction and validation path for model output.
+- `app/static`: browser JavaScript and CSS.
+- `app/templates`: server-rendered HTML shell.
+- Current capture implementation still uses `navigator.mediaDevices.getDisplayMedia()` in the browser, so the user must approve a browser picker and choose the screen, window, or tab to analyze.
+- Monitor selection is only hintable from the app. The browser still owns the picker and the final display choice.
 
 ## How To Run
-- Install dependencies: `npm install`
-- Start the app in dev mode: `npm run dev`
-- Open the Vite dev URL shown in the terminal, usually `http://127.0.0.1:5173`
-- Run tests: `npm test`
-- Build production artifacts: `npm run build`
-- Clean generated output manually if needed: `npm run clean`
+- Create and activate a virtual environment:
+  - `python3 -m venv .venv`
+  - `source .venv/bin/activate`
+- Install dependencies: `pip install -e ".[dev]"`
+- Start the app: `uvicorn app.main:app --reload`
+- Open `http://127.0.0.1:8000`
+- Run tests: `pytest`
 
 ## Environment Variables
-- `VITE_VLM_BASE_URL`
+- `VLM_BASE_URL`
   - Default: `mock`
   - Use `mock` for a deterministic local baseline without network calls.
   - Use an OpenAI-compatible base URL for a live model, for example a local `vLLM` server.
-  - Because the request comes from the browser, the endpoint must allow CORS.
-- `VITE_VLM_API_KEY`
+- `VLM_API_KEY`
   - Optional in mock mode.
   - Sent as a bearer token when present.
-- `VITE_VLM_MODEL`
+- `VLM_MODEL`
   - Default: `gpt-4.1-mini`
-- `VITE_VLM_TIMEOUT_MS`
+- `VLM_TIMEOUT_MS`
   - Default: `20000`
 
 ## Current Workflow
 1. Launch the browser UI.
 2. Click `Capture And Analyze`.
-3. The browser opens a capture picker and the user selects a tab or window.
-4. The selected surface is captured as a PNG data URL in the client.
-5. The image is sent to the configured VLM endpoint with a fixed planning prompt.
-6. The response is parsed as strict JSON and validated against the baseline schema.
-7. The UI renders the screenshot preview, plan suggestion, and raw JSON debug output.
+3. The browser opens a capture picker and the user selects a monitor, window, or tab.
+4. The selected surface is captured as a PNG data URL in browser JavaScript.
+5. The image is posted to the Python backend.
+6. The backend calls the configured VLM endpoint with a fixed planning prompt.
+7. The response is parsed as strict JSON and validated against the baseline schema.
+8. The UI renders the screenshot preview, plan suggestion, and raw JSON debug output.
 
 ## JSON Contract
-```ts
-type PlanSuggestion = {
-  summary: string
-  current_view: string
-  goals: string[]
-  next_steps: string[]
-  risks: string[]
-  confidence: number
-}
+```py
+class PlanSuggestion(BaseModel):
+    summary: str
+    current_view: str
+    goals: list[str]
+    next_steps: list[str]
+    risks: list[str]
+    confidence: float
 ```
 
 ## Agent Working Rules
@@ -73,9 +77,9 @@ type PlanSuggestion = {
 
 ## Roadmap
 ### Baseline
-- Browser tab or window screenshot capture
-- VLM analysis through an OpenAI-compatible endpoint
-- Strict JSON validation
+- Browser monitor, tab, or window screenshot capture
+- Python-backed VLM analysis through an OpenAI-compatible endpoint
+- Strict JSON validation in Python
 - Screenshot preview, plan rendering, raw response debugging, and clear error states
 
 ### Expanded
@@ -99,3 +103,4 @@ type PlanSuggestion = {
 - 2026-03-13: A root `README.md` was added and the intended GitHub slug is `openfish`.
 - 2026-03-13: The README title and project identity were updated to `🐟 OpenFish - Personal Ai Poker Assistant`.
 - 2026-03-13: Browser capture now explicitly prefers monitor sharing and includes monitor surfaces in the picker, but web apps still cannot pre-select a specific display for the user.
+- 2026-03-13: Branch `codex/python_dev` rewrites the app mainly in Python using FastAPI, while keeping browser capture in JavaScript because screen capture still requires client-side browser APIs.

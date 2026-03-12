@@ -4,4 +4,9 @@ dist-electron
 coverage
 .env
 .env.local
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.vite
 .DS_Store
