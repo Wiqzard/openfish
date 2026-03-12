@@ -15,7 +15,7 @@ The current version is intentionally narrow. It is a foundation for a future per
 
 ## Current Capabilities
 
-- Browser-native capture flow for a selected tab or window
+- Browser-native capture flow for a selected monitor, window, or tab
 - Screenshot preview directly in the app
 - OpenAI-compatible VLM request flow
 - Strict JSON schema validation with `zod`
@@ -80,7 +80,7 @@ http://127.0.0.1:5173
 ### 3. Use the baseline flow
 
 1. Click `Capture And Analyze`
-2. Choose the browser tab or window to capture
+2. Choose the browser monitor, window, or tab to capture
 3. Let OpenFish generate a structured plan suggestion
 4. Review the screenshot preview, parsed plan, and raw JSON output
 
@@ -100,6 +100,7 @@ VITE_VLM_TIMEOUT_MS=20000
 - `mock` mode works without a live model.
 - Live browser requests require the VLM endpoint to allow CORS.
 - The app expects an OpenAI-compatible `/chat/completions` interface.
+- To capture a specific monitor, choose `Entire Screen` in the browser picker and then select the display you want.
 
 ## Scripts
 

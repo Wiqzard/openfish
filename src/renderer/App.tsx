@@ -38,6 +38,16 @@ function ScreenshotPreview({ image }: { image: CapturedImage }) {
       <div className="section-heading">
         <h3>Screenshot Preview</h3>
         <span>
+          {image.surfaceType === 'monitor'
+            ? 'Monitor'
+            : image.surfaceType === 'window'
+              ? 'Window'
+              : image.surfaceType === 'browser'
+                ? 'Tab'
+                : 'Unknown source'}
+          {' '}
+          ·
+          {' '}
           {image.width} x {image.height}
         </span>
       </div>
@@ -131,8 +141,8 @@ export function App() {
           <p className="eyebrow">Poker VLM Baseline</p>
           <h1>Browser screenshot analysis for the first agent loop</h1>
           <p className="hero-copy">
-            Click once to open the browser capture picker, choose the tab or
-            window you want to analyze, send that screenshot to an
+            Click once to open the browser capture picker, choose the monitor,
+            window, or tab you want to analyze, send that screenshot to an
             OpenAI-compatible VLM endpoint, and render a structured plan
             suggestion back in the UI.
           </p>
@@ -147,9 +157,10 @@ export function App() {
             {isLoading ? 'Capturing And Analyzing...' : 'Capture And Analyze'}
           </button>
           <p className="hint-text">
-            The browser will ask you to choose a tab or window. Default endpoint
-            mode is <code>mock</code>. Set the VLM environment variables to
-            switch to a live model.
+            The browser will ask you to choose a source. To capture a specific
+            monitor, select <code>Entire Screen</code> in the picker and then
+            choose the display you want. Default endpoint mode is <code>mock</code>.
+            Set the VLM environment variables to switch to a live model.
           </p>
         </div>
       </section>
@@ -177,7 +188,7 @@ export function App() {
             The first milestone is intentionally narrow: use browser-native
             capture, keep the model call and schema validation obvious, and make
             the UI easy to debug before expanding toward richer visual-agent
-            behavior.
+            behavior. Monitor selection happens in the browser picker itself.
           </p>
         </section>
       )}

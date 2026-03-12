@@ -2,6 +2,9 @@ import { capturedImageSchema, type CapturedImage } from '../shared/contracts';
 
 type DisplayMediaOptionsWithCurrentTab = DisplayMediaStreamOptions & {
   preferCurrentTab?: boolean;
+  selfBrowserSurface?: 'include' | 'exclude';
+  surfaceSwitching?: 'include' | 'exclude';
+  monitorTypeSurfaces?: 'include' | 'exclude';
 };
 
 function waitForVideoFrame(video: HTMLVideoElement) {
@@ -45,10 +48,14 @@ export async function captureBrowserSurface(): Promise<CapturedImage> {
   try {
     stream = await navigator.mediaDevices.getDisplayMedia({
       video: {
+        displaySurface: 'monitor',
         frameRate: { ideal: 1, max: 2 },
       },
       audio: false,
-      preferCurrentTab: true,
+      preferCurrentTab: false,
+      selfBrowserSurface: 'exclude',
+      surfaceSwitching: 'include',
+      monitorTypeSurfaces: 'include',
     } as DisplayMediaOptionsWithCurrentTab);
   } catch (error) {
     if (error instanceof DOMException && error.name === 'NotAllowedError') {
@@ -69,6 +76,10 @@ export async function captureBrowserSurface(): Promise<CapturedImage> {
   }
 
   const video = document.createElement('video');
+  const videoTrack = stream.getVideoTracks()[0];
+  const displaySurface =
+    ((videoTrack?.getSettings() as { displaySurface?: string } | undefined)
+      ?.displaySurface as CapturedImage['surfaceType'] | undefined) ?? 'unknown';
   video.srcObject = stream;
   video.muted = true;
   video.playsInline = true;
@@ -105,6 +116,7 @@ export async function captureBrowserSurface(): Promise<CapturedImage> {
       dataUrl: canvas.toDataURL('image/png'),
       width,
       height,
+      surfaceType: displaySurface,
     });
   } finally {
     video.pause();

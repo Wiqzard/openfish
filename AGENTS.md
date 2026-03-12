@@ -18,6 +18,7 @@ This file is shared context for agents working in this repo. Read it before maki
 - `src/renderer`: React UI, browser capture flow, and VLM client logic.
 - `src/shared`: shared contracts, parser logic, and error shapes.
 - Current capture implementation uses `navigator.mediaDevices.getDisplayMedia()`, so the user must approve a browser picker and choose the tab or window to analyze.
+  - The app now explicitly hints for monitor selection by setting `displaySurface: "monitor"` and `monitorTypeSurfaces: "include"`, but the browser still controls the final picker and the user still chooses the specific screen.
 
 ## How To Run
 - Install dependencies: `npm install`
@@ -97,3 +98,4 @@ type PlanSuggestion = {
 - 2026-03-13: Live VLM calls now originate from the browser, so the target endpoint must permit cross-origin requests.
 - 2026-03-13: A root `README.md` was added and the intended GitHub slug is `openfish`.
 - 2026-03-13: The README title and project identity were updated to `🐟 OpenFish - Personal Ai Poker Assistant`.
+- 2026-03-13: Browser capture now explicitly prefers monitor sharing and includes monitor surfaces in the picker, but web apps still cannot pre-select a specific display for the user.

@@ -4,6 +4,7 @@ export const capturedImageSchema = z.object({
   dataUrl: z.string().startsWith('data:image/png;base64,'),
   width: z.number().int().positive(),
   height: z.number().int().positive(),
+  surfaceType: z.enum(['browser', 'window', 'monitor', 'unknown']),
 });
 
 export const planSuggestionSchema = z.object({
