@@ -4,7 +4,6 @@ from fastapi.testclient import TestClient
 
 from app.testing.dummy_vlm_server import app
 
-
 client = TestClient(app)
 
 

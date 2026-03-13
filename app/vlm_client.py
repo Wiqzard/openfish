@@ -30,8 +30,7 @@ Rules:
 
 MOCK_PLAN = PlanSuggestion(
     summary=(
-        "The screenshot shows the Python-based OpenFish interface ready to "
-        "analyze a selected monitor, window, or tab."
+        "The screenshot shows the Python-based OpenFish interface ready to analyze a selected monitor, window, or tab."
     ),
     current_view="OpenFish Python baseline home screen",
     goals=[

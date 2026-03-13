@@ -7,7 +7,7 @@ from typing import Any
 import uvicorn
 from fastapi import FastAPI, Header
 from fastapi.responses import JSONResponse, PlainTextResponse, Response
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class ChatMessage(BaseModel):
@@ -87,19 +87,11 @@ async def chat_completions(
         content = [
             {
                 "type": "text",
-                "text": json.dumps(
-                    _default_plan(
-                        f"Array-content response for: {user_text[:48] or 'no user text'}"
-                    )
-                ),
+                "text": json.dumps(_default_plan(f"Array-content response for: {user_text[:48] or 'no user text'}")),
             }
         ]
     else:
-        content = json.dumps(
-            _default_plan(
-                f"Dummy VLM analyzed the request: {user_text[:64] or 'no user text'}"
-            )
-        )
+        content = json.dumps(_default_plan(f"Dummy VLM analyzed the request: {user_text[:64] or 'no user text'}"))
 
     return JSONResponse(
         {

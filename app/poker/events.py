@@ -7,7 +7,6 @@ from pydantic import BaseModel, Field
 
 from app.poker.snapshot import Street
 
-
 EventType = Literal[
     "hand_started",
     "street_changed",

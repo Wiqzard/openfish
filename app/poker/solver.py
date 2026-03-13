@@ -9,7 +9,6 @@ from app.poker.context import DecisionContext
 from app.poker.profiles import OpponentProfile
 from app.poker.state import HandState
 
-
 SolverMode = Literal["mock", "texassolver"]
 
 
@@ -34,9 +33,7 @@ class SolverSpotConfig(BaseModel):
     dump_rounds: int = Field(default=2, ge=1)
 
     def cache_key(self) -> str:
-        return hashlib.sha256(
-            self.model_dump_json(by_alias=True, exclude_none=True).encode("utf-8")
-        ).hexdigest()[:16]
+        return hashlib.sha256(self.model_dump_json(by_alias=True, exclude_none=True).encode("utf-8")).hexdigest()[:16]
 
 
 class SolverRecommendation(BaseModel):

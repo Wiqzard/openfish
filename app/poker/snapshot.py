@@ -5,7 +5,6 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-
 Street = Literal["preflop", "flop", "turn", "river", "showdown", "unknown"]
 SurfaceType = Literal["browser", "window", "monitor", "unknown"]
 

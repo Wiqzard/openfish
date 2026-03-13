@@ -1,6 +1,6 @@
-import asyncio
 import json
 
+import anyio
 import pytest
 from mcp.server.fastmcp.exceptions import ToolError
 
@@ -84,10 +84,14 @@ def _decision_request_payload() -> dict:
     }
 
 
-def test_mcp_server_lists_openfish_tools() -> None:
+pytestmark = pytest.mark.anyio
+
+
+async def test_mcp_server_lists_openfish_tools() -> None:
     server = create_mcp_server()
 
-    tools = asyncio.run(server.list_tools())
+    with anyio.fail_after(5):
+        tools = await server.list_tools()
     tool_names = {tool.name for tool in tools}
 
     assert "analyze_image" in tool_names
@@ -97,11 +101,11 @@ def test_mcp_server_lists_openfish_tools() -> None:
     assert "decide_hand" in tool_names
 
 
-def test_mcp_analyze_image_returns_valid_plan() -> None:
+async def test_mcp_analyze_image_returns_valid_plan() -> None:
     server = create_mcp_server()
 
-    result = asyncio.run(
-        server.call_tool(
+    with anyio.fail_after(5):
+        result = await server.call_tool(
             "analyze_image",
             {
                 "data_url": "data:image/png;base64,ZmFrZQ==",
@@ -110,7 +114,6 @@ def test_mcp_analyze_image_returns_valid_plan() -> None:
                 "surface_type": "monitor",
             },
         )
-    )
     payload = _tool_payload(result)
 
     assert payload["image"]["surfaceType"] == "monitor"
@@ -118,10 +121,11 @@ def test_mcp_analyze_image_returns_valid_plan() -> None:
     assert payload["rawResponse"]
 
 
-def test_mcp_decide_hand_returns_mock_solver_recommendation() -> None:
+async def test_mcp_decide_hand_returns_mock_solver_recommendation() -> None:
     server = create_mcp_server()
 
-    result = asyncio.run(server.call_tool("decide_hand", {"request": _decision_request_payload()}))
+    with anyio.fail_after(5):
+        result = await server.call_tool("decide_hand", {"request": _decision_request_payload()})
     payload = _tool_payload(result)
 
     assert payload["solver_recommendation"]["action"] == "BET 50"
@@ -129,14 +133,14 @@ def test_mcp_decide_hand_returns_mock_solver_recommendation() -> None:
     assert payload["tool_trace"][-1]["tool_name"] == "solve_spot"
 
 
-def test_mcp_build_solver_spot_surfaces_current_ip_limitation() -> None:
+async def test_mcp_build_solver_spot_surfaces_current_ip_limitation() -> None:
     server = create_mcp_server()
     request = _decision_request_payload()
     request["hero_position"] = "ip"
 
     with pytest.raises(ToolError, match="SOLVER_NODE_PATH_UNSUPPORTED"):
-        asyncio.run(
-            server.call_tool(
+        with anyio.fail_after(5):
+            await server.call_tool(
                 "build_solver_spot",
                 {
                     "state": request["state"],
@@ -146,4 +150,3 @@ def test_mcp_build_solver_spot_surfaces_current_ip_limitation() -> None:
                     "oop_range": request["oop_range"],
                 },
             )
-        )

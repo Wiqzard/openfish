@@ -1,5 +1,5 @@
 from app.poker.profiles import OpponentProfile
-from app.poker.snapshot import PlayerSnapshot, StackAmount, TableSnapshot
+from app.poker.snapshot import PlayerSnapshot, StackAmount, Street, TableSnapshot
 from app.services.context_builder import build_decision_context
 from app.services.event_diff import diff_snapshots
 from app.services.state_reducer import apply_events, initialize_state_from_snapshot
@@ -7,7 +7,7 @@ from app.services.state_reducer import apply_events, initialize_state_from_snaps
 
 def make_snapshot(
     *,
-    street: str,
+    street: Street,
     pot: float,
     hero_bet: float,
     villain_bet: float,

@@ -109,7 +109,7 @@ def diff_snapshots(
 
             if current_bet > previous_bet:
                 highest_previous_bet = max(
-                    (_bet_amount(existing_player) for existing_player in previous.players),
+                    (_bet_amount(existing_player) for existing_player in previous_players.values()),
                     default=0.0,
                 )
                 event_type = (

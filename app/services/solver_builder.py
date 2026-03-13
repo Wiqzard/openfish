@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal, cast
+
 from app.errors import AppError
 from app.poker.solver import SolverSpotConfig
 from app.poker.state import HandState
@@ -26,12 +28,12 @@ DEFAULT_BET_SIZING_LINES = [
     "set_bet_sizes ip,river,allin",
 ]
 
+PostflopStreet = Literal["flop", "turn", "river"]
+
 
 def _effective_stack(state: HandState) -> float:
     stacks = [
-        player.stack_current
-        for player in state.players.values()
-        if player.in_hand and player.stack_current is not None
+        player.stack_current for player in state.players.values() if player.in_hand and player.stack_current is not None
     ]
     if not stacks:
         raise AppError(
@@ -55,11 +57,16 @@ def build_solver_spot_from_state(
             "SOLVER_UNSUPPORTED_STREET",
             "TexasSolver integration currently supports postflop streets only.",
         )
+    street = cast(PostflopStreet, state.street)
 
     if hero_position != "oop":
         raise AppError(
             "SOLVER_NODE_PATH_UNSUPPORTED",
-            "Current TexasSolver integration only supports root-node street-entry spots where hero is OOP. IP decisions require child-node traversal, which is not implemented yet.",
+            (
+                "Current TexasSolver integration only supports root-node street-entry "
+                "spots where hero is OOP. IP decisions require child-node traversal, "
+                "which is not implemented yet."
+            ),
         )
 
     if state.pot_chips is None:
@@ -71,7 +78,7 @@ def build_solver_spot_from_state(
     return SolverSpotConfig(
         table_id=state.table_id,
         hand_id=state.hand_id,
-        street=state.street,
+        street=street,
         board_cards=state.board_cards,
         pot_chips=state.pot_chips,
         effective_stack_chips=_effective_stack(state),

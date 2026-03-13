@@ -27,9 +27,7 @@ def initialize_state_from_snapshot(snapshot: TableSnapshot) -> HandState:
     uncertainties: list[str] = []
     for player in snapshot.players:
         if player.stack.chips is None and player.stack.raw_text:
-            uncertainties.append(
-                f"Stack for {player.player_id} is only available as raw text: {player.stack.raw_text}"
-            )
+            uncertainties.append(f"Stack for {player.player_id} is only available as raw text: {player.stack.raw_text}")
 
     return HandState(
         hand_id=snapshot.hand_id or f"{snapshot.table_id}:unknown-hand",

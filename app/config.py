@@ -40,8 +40,6 @@ def get_config() -> AppConfig:
         texassolver_bin=os.getenv("TEXASSOLVER_BIN", "").strip() or None,
         texassolver_resource_dir=os.getenv("TEXASSOLVER_RESOURCE_DIR", "").strip() or None,
         solver_timeout_ms=_parse_timeout(os.getenv("SOLVER_TIMEOUT_MS", "120000")),
-        solver_cache_dir=os.getenv("SOLVER_CACHE_DIR", ".openfish/solver-cache").strip()
-        or ".openfish/solver-cache",
-        solver_work_dir=os.getenv("SOLVER_WORK_DIR", ".openfish/solver-runs").strip()
-        or ".openfish/solver-runs",
+        solver_cache_dir=os.getenv("SOLVER_CACHE_DIR", ".openfish/solver-cache").strip() or ".openfish/solver-cache",
+        solver_work_dir=os.getenv("SOLVER_WORK_DIR", ".openfish/solver-runs").strip() or ".openfish/solver-runs",
     )

@@ -8,6 +8,7 @@ version = "0.1.0"
 description = "OpenFish - Personal Ai Poker Assistant"
 readme = "README.md"
 requires-python = ">=3.12"
+license = { file = "LICENSE" }
 dependencies = [
   "fastapi>=0.115,<1.0",
   "httpx>=0.28,<1.0",
@@ -15,11 +16,6 @@ dependencies = [
   "mcp[cli]>=1.26.0,<2.0",
   "pydantic>=2.9,<3.0",
   "uvicorn[standard]>=0.32,<1.0",
-]
-
-[project.optional-dependencies]
-dev = [
-  "pytest>=8.3,<9.0",
 ]
 
 [project.scripts]
@@ -30,6 +26,27 @@ openfish-mcp = "app.mcp_server:main"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["TexasSolver"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "standard"
+include = ["app", "tests"]
+exclude = ["TexasSolver", ".venv", ".openfish", "coverage", "dist", "node_modules"]
+
+[tool.coverage.run]
+branch = true
+source = ["app"]
+
+[tool.coverage.report]
+show_missing = true
+
 [tool.hatch.build]
 include = [
   "app/**/*.py",
@@ -39,3 +56,13 @@ include = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["app"]
+
+[dependency-groups]
+dev = [
+    "anyio>=4.12.1",
+    "coverage>=7.13.4",
+    "pre-commit>=4.5.1",
+    "pyright>=1.1.408",
+    "pytest>=8.4.2",
+    "ruff>=0.15.6",
+]

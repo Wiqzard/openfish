@@ -8,7 +8,6 @@ import pytest
 from app.poker.solver import SolverSpotConfig
 from app.services.texassolver_wrapper import solve_with_texassolver
 
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 TEXASSOLVER_BIN = REPO_ROOT / "TexasSolver" / "console_solver"
 TEXASSOLVER_RESOURCES = REPO_ROOT / "TexasSolver" / "resources"

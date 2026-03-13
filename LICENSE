@@ -1,0 +1,24 @@
+OpenFish Proprietary Evaluation License
+Copyright (c) 2026 Sebastian Stapf
+All rights reserved.
+
+This repository is source-available, but it is not open source software.
+
+Permission is granted to view, clone, and fork this repository for personal evaluation,
+non-commercial research, and internal testing only.
+
+Without prior written permission from the copyright holder, you may not:
+
+1. use this software in production;
+2. provide this software, or a modified version of it, to third parties as a hosted or managed service;
+3. sell, sublicense, or commercially distribute this software;
+4. remove this license notice from the repository or substantial portions of it.
+
+Any other right not expressly granted by this license is reserved.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN
+AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

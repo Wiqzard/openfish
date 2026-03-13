@@ -1,8 +1,7 @@
-from app.poker.profiles import OpponentProfile
 from fastapi.testclient import TestClient
 
 from app.main import app
-
+from app.poker.profiles import OpponentProfile
 
 client = TestClient(app)
 

@@ -73,7 +73,10 @@ def parse_root_solver_recommendation(
     notes = []
     if spot.action_history:
         notes.append(
-            "Current implementation solves the root node for the provided street and does not yet traverse post-action child nodes."
+            (
+                "Current implementation solves the root node for the provided street "
+                "and does not yet traverse post-action child nodes."
+            )
         )
 
     return SolverRecommendation(

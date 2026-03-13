@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import argparse
-from typing import Any, Literal
+from typing import Any, Literal, NoReturn
 
 from mcp.server.fastmcp import FastMCP
 
@@ -22,7 +22,7 @@ from app.services.solver_builder import build_solver_spot_from_state
 from app.vlm_client import request_plan_suggestion
 
 
-def _rethrow_tool_error(exc: AppError) -> None:
+def _rethrow_tool_error(exc: AppError) -> NoReturn:
     detail_parts = [exc.code, exc.message]
     if exc.details:
         detail_parts.append(exc.details)
@@ -103,9 +103,7 @@ def create_mcp_server() -> FastMCP:
         opponent_profiles: list[dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
         parsed_state = HandState.model_validate(state)
-        parsed_profiles = [
-            OpponentProfile.model_validate(profile) for profile in opponent_profiles or []
-        ]
+        parsed_profiles = [OpponentProfile.model_validate(profile) for profile in opponent_profiles or []]
         return build_decision_context_tool(
             parsed_state,
             hero_cards=hero_cards,
@@ -154,7 +152,10 @@ def create_mcp_server() -> FastMCP:
 
     @server.tool(
         name="decide_hand",
-        description="Run the full OpenFish decision pipeline: context building, pot odds, solver spot creation, solver execution, and tool trace.",
+        description=(
+            "Run the full OpenFish decision pipeline: context building, pot odds, "
+            "solver spot creation, solver execution, and tool trace."
+        ),
     )
     async def decide_hand(request: dict[str, Any]) -> dict[str, Any]:
         parsed_request = DecisionRequest.model_validate(request)

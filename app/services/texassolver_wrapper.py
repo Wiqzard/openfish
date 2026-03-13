@@ -74,9 +74,7 @@ async def solve_with_texassolver(spot: SolverSpotConfig) -> SolverRecommendation
         )
 
     resource_dir = (
-        Path(config.texassolver_resource_dir)
-        if config.texassolver_resource_dir
-        else solver_bin.parent / "resources"
+        Path(config.texassolver_resource_dir) if config.texassolver_resource_dir else solver_bin.parent / "resources"
     )
     if not resource_dir.exists():
         raise AppError(
