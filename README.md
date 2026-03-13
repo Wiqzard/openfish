@@ -133,7 +133,7 @@ SOLVER_WORK_DIR=.openfish/solver-runs
 
 ## Prompt Examples
 
-Example system prompts live in [prompts/system_prompts.md](/Users/sebastianstapf/Documents/projects/Poker/prompts/system_prompts.md).
+Example system prompts live in [prompts/system_prompts.md](/Users/sebastianstapf/Documents/projects/openfish/prompts/system_prompts.md).
 
 Included prompt variants:
 
@@ -148,8 +148,8 @@ This branch now includes a dummy OpenAI-compatible VLM server and client for tes
 
 Files:
 
-- [dummy_vlm_server.py](/Users/sebastianstapf/Documents/projects/Poker/app/testing/dummy_vlm_server.py)
-- [dummy_vlm_client.py](/Users/sebastianstapf/Documents/projects/Poker/app/testing/dummy_vlm_client.py)
+- [dummy_vlm_server.py](/Users/sebastianstapf/Documents/projects/openfish/app/testing/dummy_vlm_server.py)
+- [dummy_vlm_client.py](/Users/sebastianstapf/Documents/projects/openfish/app/testing/dummy_vlm_client.py)
 
 Run the fake server:
 
@@ -375,6 +375,6 @@ Current limitation:
 
 ## License
 
-OpenFish is currently released under the restrictive source-available license in [LICENSE](/Users/sebastianstapf/Documents/projects/Poker/LICENSE).
+OpenFish is currently released under the restrictive source-available license in [LICENSE](/Users/sebastianstapf/Documents/projects/openfish/LICENSE).
 
 That means the repo is visible for evaluation and research, but it is not open source and is not available for production or commercial use without permission.

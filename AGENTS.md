@@ -4,6 +4,7 @@ This file is shared context for agents working in this repo. Read it before maki
 
 ## Repo Purpose
 - This branch rewrites OpenFish mainly in Python.
+- Current local workspace path is `/Users/sebastianstapf/Documents/projects/openfish`.
 - Current product goal: click one button, choose a browser monitor, tab, or window to capture, send the screenshot through a Python backend to a VLM endpoint, and render a structured plan suggestion back in the UI.
 - GitHub repo identity remains `openfish` with the display title `🐟 OpenFish - Personal Ai Poker Assistant`.
 - This repo is not yet a live poker-playing bot. The current release is still a visual planning assistant baseline.
@@ -184,3 +185,4 @@ class PlanSuggestion(BaseModel):
 - 2026-03-13: The repo is now `uv`-first, tracks `uv.lock`, uses Ruff/Pyright/pre-commit for quality checks, and documents a restrictive source-available license in `LICENSE`.
 - 2026-03-13: Future agents should commit and push after each major change once the relevant checks pass.
 - 2026-03-13: OpenFish now has a Rich-based `openfish` CLI with a fish-themed welcome banner and subcommands for `ui`, `mcp`, `dummy-vlm`, and `doctor`.
+- 2026-03-13: The local repo folder was renamed from `Poker` to `openfish`, and hardcoded local documentation links were updated accordingly.
