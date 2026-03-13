@@ -11,14 +11,6 @@ OpenFish is a browser-based visual agent workspace for building a personal poker
 
 The browser still handles screen capture because web capture APIs must run client-side, but the application flow, prompt orchestration, validation, and VLM integration now live mainly in Python.
 
-## What Changed On `codex/python_dev`
-
-- React/Vite frontend replaced with a lightweight static browser UI
-- FastAPI now serves the app and owns the `/api/analyze` workflow
-- FastAPI now also serves `/api/decide` for solver-backed decisions
-- VLM request handling moved into Python with `httpx`
-- JSON schema validation moved into Python with `pydantic`
-- Tests now run with `pytest`
 
 ## Tech Stack
 
