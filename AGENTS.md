@@ -10,6 +10,7 @@ This file is shared context for agents working in this repo. Read it before maki
 
 ## Current Stack
 - FastAPI for the application server and API routes.
+- MCP Python SDK for exposing OpenFish as a tool server.
 - Jinja2 templates plus lightweight browser JavaScript for the UI.
 - Browser Media Capture APIs for screenshot collection.
 - `pydantic` for runtime validation of requests and VLM responses.
@@ -17,6 +18,7 @@ This file is shared context for agents working in this repo. Read it before maki
 
 ## Architecture Summary
 - `app/main.py`: FastAPI entrypoint, page route, healthcheck, `/api/analyze`, and `/api/decide`.
+- `app/mcp_server.py`: MCP entrypoint exposing the same OpenFish capabilities as MCP tools.
 - `app/vlm_client.py`: OpenAI-compatible VLM client in Python.
 - `app/parser.py`: strict JSON extraction and validation path for model output.
 - `app/poker`: canonical poker-domain models for snapshots, events, state, profiles, and decision context.
@@ -43,6 +45,7 @@ This file is shared context for agents working in this repo. Read it before maki
   - `source .venv/bin/activate`
 - Install dependencies: `pip install -e ".[dev]"`
 - Start the app: `uvicorn app.main:app --reload`
+- Start the MCP server: `openfish-mcp`
 - Open `http://127.0.0.1:8000`
 - Run tests: `pytest`
 
@@ -103,6 +106,16 @@ This file is shared context for agents working in this repo. Read it before maki
    - run the solver tool
 5. The endpoint returns a solver-backed recommendation and a `tool_trace`.
 
+## MCP Workflow
+1. Start `openfish-mcp`.
+2. Connect an MCP client over `stdio` by default, or use `--transport sse` / `--transport streamable-http` if needed.
+3. Call the OpenFish MCP tools instead of the HTTP routes when you want agent-native tool use.
+4. Prefer:
+   - `analyze_image` for screenshot planning
+   - `build_decision_context` plus `compute_pot_odds` for grounded support data
+   - `build_solver_spot` plus `solve_spot` for explicit TexasSolver-backed outputs
+   - `decide_hand` for the full current orchestration path
+
 ## JSON Contract
 ```py
 class PlanSuggestion(BaseModel):
@@ -158,3 +171,4 @@ class PlanSuggestion(BaseModel):
 - 2026-03-13: TexasSolver was integrated as a deterministic tool through a command-file wrapper, cached runs, root-node strategy parsing, and a new `/api/decide` endpoint.
 - 2026-03-13: A dummy OpenAI-compatible VLM server/client pair was added for testing the analyze path and error scenarios without a real model endpoint.
 - 2026-03-13: Live TexasSolver tests confirmed the current wrapper works end to end for real root-node OOP postflop spots; IP and child-node decisions remain unsupported until tree traversal is implemented.
+- 2026-03-13: OpenFish now also exposes its core analyze/state/context/solver/decision capabilities through an MCP server via `app/mcp_server.py` and the `openfish-mcp` CLI entrypoint.

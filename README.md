@@ -25,6 +25,7 @@ The browser still handles screen capture because web capture APIs must run clien
 - Python 3.12+
 - FastAPI
 - Jinja2
+- MCP Python SDK
 - Pydantic
 - HTTPX
 - Browser Media Capture APIs
@@ -55,6 +56,21 @@ Then open:
 
 ```bash
 http://127.0.0.1:8000
+```
+
+### 4. Start the MCP server
+
+```bash
+openfish-mcp
+```
+
+This runs OpenFish as an MCP tool server over `stdio`.
+
+Optional transports:
+
+```bash
+openfish-mcp --transport sse
+openfish-mcp --transport streamable-http
 ```
 
 ## Environment Configuration
@@ -88,6 +104,7 @@ SOLVER_WORK_DIR=.openfish/solver-runs
 - Browser-native capture flow for a selected monitor, window, or tab
 - Python-backed `/api/analyze` endpoint
 - Python-backed `/api/decide` endpoint with tool-style solver orchestration
+- MCP server exposing the same analysis and decision capabilities as tools
 - Screenshot preview directly in the app
 - Structured plan rendering
 - Raw response debug panel
@@ -208,12 +225,46 @@ The endpoint then:
 5. runs the solver tool in mock or live mode
 6. returns a recommendation plus a tool trace
 
+## MCP Server
+
+OpenFish can now run as an MCP server so external agents can use the repo as a tool provider.
+
+Run it with:
+
+```bash
+openfish-mcp
+```
+
+Current MCP tools:
+
+- `analyze_image`
+- `get_current_hand_state`
+- `get_opponent_profiles`
+- `compute_pot_odds`
+- `build_decision_context`
+- `build_solver_spot`
+- `solve_spot`
+- `decide_hand`
+
+Recommended usage:
+
+1. Use `analyze_image` for screenshot-to-plan testing.
+2. Use `build_decision_context` and `compute_pot_odds` for grounded reasoning support.
+3. Use `build_solver_spot` and `solve_spot` when you want explicit TexasSolver-backed outputs.
+4. Use `decide_hand` when you want the full current OpenFish tool chain in one call.
+
+Current solver limitation:
+
+- The MCP solver path still only supports root-node postflop spots where hero is `OOP`.
+- IP decisions and child-node traversal remain future work.
+
 ## Project Structure
 
 ```text
 app/
   agent/           Tool-style decision orchestration
   main.py           FastAPI entrypoint and routes
+  mcp_server.py     MCP server exposing OpenFish tools
   config.py         Environment-backed settings
   errors.py         App-level error shape
   models.py         Pydantic request and response models
@@ -227,6 +278,7 @@ tests/
   test_api.py
   test_decision_agent.py
   test_dummy_vlm.py
+  test_mcp_server.py
   test_parser.py
   test_poker_reasoning.py
 ```
