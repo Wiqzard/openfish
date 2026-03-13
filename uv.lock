@@ -584,6 +584,7 @@ dependencies = [
     { name = "jinja2" },
     { name = "mcp", extra = ["cli"] },
     { name = "pydantic" },
+    { name = "rich" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
@@ -604,6 +605,7 @@ requires-dist = [
     { name = "jinja2", specifier = ">=3.1,<4.0" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.26.0,<2.0" },
     { name = "pydantic", specifier = ">=2.9,<3.0" },
+    { name = "rich", specifier = ">=14.3.3" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.32,<1.0" },
 ]
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -48,3 +49,8 @@ async def analyze(request: AnalysisRequest) -> AnalysisResult:
 @app.post("/api/decide", response_model=DecisionResponse)
 async def decide(request: DecisionRequest) -> DecisionResponse:
     return await decide_with_tools(request)
+
+
+def run_web_app(host: str = "127.0.0.1", port: int = 8000, reload: bool = True) -> None:
+    """Run the OpenFish web app."""
+    uvicorn.run("app.main:app", host=host, port=port, reload=reload)

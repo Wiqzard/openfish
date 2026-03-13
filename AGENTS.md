@@ -19,6 +19,7 @@ This file is shared context for agents working in this repo. Read it before maki
 
 ## Architecture Summary
 - `app/main.py`: FastAPI entrypoint, page route, healthcheck, `/api/analyze`, and `/api/decide`.
+- `app/cli.py`: Rich-powered local CLI that wraps the web app, MCP server, dummy VLM server, and doctor command.
 - `app/mcp_server.py`: MCP entrypoint exposing the same OpenFish capabilities as MCP tools.
 - `app/vlm_client.py`: OpenAI-compatible VLM client in Python.
 - `app/parser.py`: strict JSON extraction and validation path for model output.
@@ -42,8 +43,11 @@ This file is shared context for agents working in this repo. Read it before maki
 
 ## How To Run
 - Install and sync dependencies: `uv sync --dev`
-- Start the app: `uv run --frozen uvicorn app.main:app --reload`
-- Start the MCP server: `uv run --frozen openfish-mcp`
+- Open the CLI: `uv run --frozen openfish`
+- Start the app: `uv run --frozen openfish ui`
+- Start the MCP server: `uv run --frozen openfish mcp`
+- Start the dummy VLM server: `uv run --frozen openfish dummy-vlm`
+- Run config checks: `uv run --frozen openfish doctor`
 - Open `http://127.0.0.1:8000`
 - Run tests: `uv run --frozen pytest`
 - Run formatters and checks:
@@ -81,7 +85,7 @@ This file is shared context for agents working in this repo. Read it before maki
   - Default: `.openfish/solver-runs`
 
 ## Current Workflow
-1. Launch the browser UI.
+1. Launch the browser UI with `uv run --frozen openfish ui`.
 2. Click `Capture And Analyze`.
 3. The browser opens a capture picker and the user selects a monitor, window, or tab.
 4. The selected surface is captured as a PNG data URL in browser JavaScript.
@@ -91,7 +95,7 @@ This file is shared context for agents working in this repo. Read it before maki
 8. The UI renders the screenshot preview, plan suggestion, and raw JSON debug output.
 
 ## Dummy VLM Workflow
-1. Start `openfish-dummy-vlm`.
+1. Start `uv run --frozen openfish dummy-vlm`.
 2. Set `VLM_BASE_URL=http://127.0.0.1:8010`.
 3. Set `VLM_MODEL` to a scenario such as `dummy-plan` or `dummy-schema-error`.
 4. Run the normal OpenFish analyze flow or call the helper client.
@@ -110,7 +114,7 @@ This file is shared context for agents working in this repo. Read it before maki
 5. The endpoint returns a solver-backed recommendation and a `tool_trace`.
 
 ## MCP Workflow
-1. Start `openfish-mcp`.
+1. Start `uv run --frozen openfish mcp`.
 2. Connect an MCP client over `stdio` by default, or use `--transport sse` / `--transport streamable-http` if needed.
 3. Call the OpenFish MCP tools instead of the HTTP routes when you want agent-native tool use.
 4. Prefer:
@@ -179,3 +183,4 @@ class PlanSuggestion(BaseModel):
 - 2026-03-13: OpenFish now also exposes its core analyze/state/context/solver/decision capabilities through an MCP server via `app/mcp_server.py` and the `openfish-mcp` CLI entrypoint.
 - 2026-03-13: The repo is now `uv`-first, tracks `uv.lock`, uses Ruff/Pyright/pre-commit for quality checks, and documents a restrictive source-available license in `LICENSE`.
 - 2026-03-13: Future agents should commit and push after each major change once the relevant checks pass.
+- 2026-03-13: OpenFish now has a Rich-based `openfish` CLI with a fish-themed welcome banner and subcommands for `ui`, `mcp`, `dummy-vlm`, and `doctor`.

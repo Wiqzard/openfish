@@ -43,7 +43,7 @@ uv sync --dev
 ### 2. Start the server
 
 ```bash
-uv run --frozen uvicorn app.main:app --reload
+uv run --frozen openfish ui
 ```
 
 Then open:
@@ -55,7 +55,7 @@ http://127.0.0.1:8000
 ### 3. Start the MCP server
 
 ```bash
-uv run --frozen openfish-mcp
+uv run --frozen openfish mcp
 ```
 
 This runs OpenFish as an MCP tool server over `stdio`.
@@ -63,8 +63,8 @@ This runs OpenFish as an MCP tool server over `stdio`.
 Optional transports:
 
 ```bash
-uv run --frozen openfish-mcp --transport sse
-uv run --frozen openfish-mcp --transport streamable-http
+uv run --frozen openfish mcp --transport sse
+uv run --frozen openfish mcp --transport streamable-http
 ```
 
 ### 4. Install Git hooks
@@ -72,6 +72,23 @@ uv run --frozen openfish-mcp --transport streamable-http
 ```bash
 uv run --frozen pre-commit install
 ```
+
+## OpenFish CLI
+
+OpenFish now ships with a welcoming local CLI:
+
+```bash
+uv run --frozen openfish
+```
+
+It opens with a fish-themed command deck and gives you the main entrypoints:
+
+- `uv run --frozen openfish ui`
+- `uv run --frozen openfish mcp`
+- `uv run --frozen openfish dummy-vlm`
+- `uv run --frozen openfish doctor`
+
+Use `--plain` if you want the commands without ANSI color output.
 
 ## Environment Configuration
 
@@ -137,7 +154,7 @@ Files:
 Run the fake server:
 
 ```bash
-uv run --frozen openfish-dummy-vlm
+uv run --frozen openfish dummy-vlm
 ```
 
 Or:
@@ -233,7 +250,7 @@ OpenFish can now run as an MCP server so external agents can use the repo as a t
 Run it with:
 
 ```bash
-uv run --frozen openfish-mcp
+uv run --frozen openfish mcp
 ```
 
 Current MCP tools:

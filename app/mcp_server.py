@@ -30,6 +30,7 @@ def _rethrow_tool_error(exc: AppError) -> NoReturn:
 
 
 def create_mcp_server() -> FastMCP:
+    """Create the OpenFish MCP server."""
     server = FastMCP(
         "OpenFish",
         instructions=(
@@ -168,7 +169,13 @@ def create_mcp_server() -> FastMCP:
     return server
 
 
+def run_mcp_server(transport: Literal["stdio", "sse", "streamable-http"] = "stdio") -> None:
+    """Run the OpenFish MCP server with the selected transport."""
+    create_mcp_server().run(transport=transport)
+
+
 def main() -> None:
+    """Run the OpenFish MCP server from the command line."""
     parser = argparse.ArgumentParser(description="Run the OpenFish MCP server.")
     parser.add_argument(
         "--transport",
@@ -177,7 +184,7 @@ def main() -> None:
         help="MCP transport to run. Default is stdio.",
     )
     args = parser.parse_args()
-    create_mcp_server().run(transport=args.transport)
+    run_mcp_server(transport=args.transport)
 
 
 if __name__ == "__main__":

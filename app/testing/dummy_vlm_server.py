@@ -112,7 +112,13 @@ async def chat_completions(
 
 
 def main() -> None:
-    uvicorn.run("app.testing.dummy_vlm_server:app", host="127.0.0.1", port=8010, reload=False)
+    """Run the dummy VLM server with default local settings."""
+    run_dummy_vlm_server()
+
+
+def run_dummy_vlm_server(host: str = "127.0.0.1", port: int = 8010) -> None:
+    """Run the dummy VLM server."""
+    uvicorn.run("app.testing.dummy_vlm_server:app", host=host, port=port, reload=False)
 
 
 if __name__ == "__main__":

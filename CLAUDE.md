@@ -42,9 +42,11 @@ This document contains critical information about working with this codebase. Fo
 
 ## Repo Commands
 
-- Start the web app: `uv run --frozen uvicorn app.main:app --reload`
-- Start the MCP server: `uv run --frozen openfish-mcp`
-- Start the dummy VLM server: `uv run --frozen openfish-dummy-vlm`
+- Open the command deck: `uv run --frozen openfish`
+- Start the web app: `uv run --frozen openfish ui`
+- Start the MCP server: `uv run --frozen openfish mcp`
+- Start the dummy VLM server: `uv run --frozen openfish dummy-vlm`
+- Run the config doctor: `uv run --frozen openfish doctor`
 - Run tests: `uv run --frozen pytest`
 - Format: `uv run --frozen ruff format .`
 - Lint: `uv run --frozen ruff check .`
