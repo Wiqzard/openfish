@@ -23,6 +23,7 @@ The browser still handles screen capture because web capture APIs must run clien
 ## Tech Stack
 
 - Python 3.12+
+- uv
 - FastAPI
 - Jinja2
 - MCP Python SDK
@@ -33,23 +34,16 @@ The browser still handles screen capture because web capture APIs must run clien
 
 ## Quick Start
 
-### 1. Create a virtual environment
+### 1. Sync the project with uv
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+uv sync --dev
 ```
 
-### 2. Install dependencies
+### 2. Start the server
 
 ```bash
-pip install -e ".[dev]"
-```
-
-### 3. Start the server
-
-```bash
-uvicorn app.main:app --reload
+uv run --frozen uvicorn app.main:app --reload
 ```
 
 Then open:
@@ -58,10 +52,10 @@ Then open:
 http://127.0.0.1:8000
 ```
 
-### 4. Start the MCP server
+### 3. Start the MCP server
 
 ```bash
-openfish-mcp
+uv run --frozen openfish-mcp
 ```
 
 This runs OpenFish as an MCP tool server over `stdio`.
@@ -69,8 +63,14 @@ This runs OpenFish as an MCP tool server over `stdio`.
 Optional transports:
 
 ```bash
-openfish-mcp --transport sse
-openfish-mcp --transport streamable-http
+uv run --frozen openfish-mcp --transport sse
+uv run --frozen openfish-mcp --transport streamable-http
+```
+
+### 4. Install Git hooks
+
+```bash
+uv run --frozen pre-commit install
 ```
 
 ## Environment Configuration
@@ -93,6 +93,7 @@ SOLVER_WORK_DIR=.openfish/solver-runs
 ### Notes
 
 - `mock` mode works without a live model.
+- This repo is `uv`-first. Do not use `pip install` for project setup.
 - The backend expects an OpenAI-compatible `/chat/completions` interface.
 - Because the VLM request is now server-side, you no longer need CORS for local development in this branch.
 - To capture a specific monitor, choose `Entire Screen` in the browser picker and then select the display you want.
@@ -136,21 +137,21 @@ Files:
 Run the fake server:
 
 ```bash
-openfish-dummy-vlm
+uv run --frozen openfish-dummy-vlm
 ```
 
 Or:
 
 ```bash
-python -m app.testing.dummy_vlm_server
+uv run --frozen python -m app.testing.dummy_vlm_server
 ```
 
 Call it from the helper client:
 
 ```bash
-openfish-dummy-vlm-client --scenario dummy-plan
-openfish-dummy-vlm-client --scenario dummy-schema-error
-openfish-dummy-vlm-client --scenario dummy-http-error
+uv run --frozen openfish-dummy-vlm-client --scenario dummy-plan
+uv run --frozen openfish-dummy-vlm-client --scenario dummy-schema-error
+uv run --frozen openfish-dummy-vlm-client --scenario dummy-http-error
 ```
 
 Supported scenarios:
@@ -232,7 +233,7 @@ OpenFish can now run as an MCP server so external agents can use the repo as a t
 Run it with:
 
 ```bash
-openfish-mcp
+uv run --frozen openfish-mcp
 ```
 
 Current MCP tools:
@@ -286,8 +287,19 @@ tests/
 ## Running Tests
 
 ```bash
-pytest
+uv run --frozen pytest
 ```
+
+## Development Checks
+
+```bash
+uv run --frozen ruff format .
+uv run --frozen ruff check .
+uv run --frozen pyright
+uv run --frozen pre-commit run --all-files
+```
+
+The repository tracks `uv.lock`, so dependency changes should be made with `uv add` / `uv add --dev` and committed with the updated lockfile.
 
 ## Why This Branch Exists
 
@@ -343,3 +355,9 @@ Current limitation:
 - the first implementation solves the root node for the provided street
 - it does not yet traverse down the TexasSolver child tree for within-street action sequences
 - so it is best suited to OOP street-entry decisions until node-path mapping is added
+
+## License
+
+OpenFish is currently released under the restrictive source-available license in [LICENSE](/Users/sebastianstapf/Documents/projects/Poker/LICENSE).
+
+That means the repo is visible for evaluation and research, but it is not open source and is not available for production or commercial use without permission.

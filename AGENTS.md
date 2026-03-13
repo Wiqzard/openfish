@@ -9,6 +9,7 @@ This file is shared context for agents working in this repo. Read it before maki
 - This repo is not yet a live poker-playing bot. The current release is still a visual planning assistant baseline.
 
 ## Current Stack
+- `uv` for dependency management, locking, and tool execution.
 - FastAPI for the application server and API routes.
 - MCP Python SDK for exposing OpenFish as a tool server.
 - Jinja2 templates plus lightweight browser JavaScript for the UI.
@@ -40,14 +41,16 @@ This file is shared context for agents working in this repo. Read it before maki
 - Monitor selection is only hintable from the app. The browser still owns the picker and the final display choice.
 
 ## How To Run
-- Create and activate a virtual environment:
-  - `python3 -m venv .venv`
-  - `source .venv/bin/activate`
-- Install dependencies: `pip install -e ".[dev]"`
-- Start the app: `uvicorn app.main:app --reload`
-- Start the MCP server: `openfish-mcp`
+- Install and sync dependencies: `uv sync --dev`
+- Start the app: `uv run --frozen uvicorn app.main:app --reload`
+- Start the MCP server: `uv run --frozen openfish-mcp`
 - Open `http://127.0.0.1:8000`
-- Run tests: `pytest`
+- Run tests: `uv run --frozen pytest`
+- Run formatters and checks:
+  - `uv run --frozen ruff format .`
+  - `uv run --frozen ruff check .`
+  - `uv run --frozen pyright`
+  - `uv run --frozen pre-commit run --all-files`
 
 ## Environment Variables
 - `VLM_BASE_URL`
@@ -134,6 +137,8 @@ class PlanSuggestion(BaseModel):
 - Prefer app-specific facts and current constraints over generic process notes.
 - Keep commands accurate. If a script changes, update this file in the same change.
 - Remove stale instructions instead of letting multiple conflicting notes accumulate.
+- Use `uv` only for dependency management and tool execution. Do not use `pip`.
+- After each major change, if the relevant checks pass, create a commit and push it before moving on.
 
 ## Roadmap
 ### Baseline
@@ -172,3 +177,5 @@ class PlanSuggestion(BaseModel):
 - 2026-03-13: A dummy OpenAI-compatible VLM server/client pair was added for testing the analyze path and error scenarios without a real model endpoint.
 - 2026-03-13: Live TexasSolver tests confirmed the current wrapper works end to end for real root-node OOP postflop spots; IP and child-node decisions remain unsupported until tree traversal is implemented.
 - 2026-03-13: OpenFish now also exposes its core analyze/state/context/solver/decision capabilities through an MCP server via `app/mcp_server.py` and the `openfish-mcp` CLI entrypoint.
+- 2026-03-13: The repo is now `uv`-first, tracks `uv.lock`, uses Ruff/Pyright/pre-commit for quality checks, and documents a restrictive source-available license in `LICENSE`.
+- 2026-03-13: Future agents should commit and push after each major change once the relevant checks pass.
