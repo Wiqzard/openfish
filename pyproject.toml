@@ -21,6 +21,10 @@ dev = [
   "pytest>=8.3,<9.0",
 ]
 
+[project.scripts]
+openfish-dummy-vlm = "app.testing.dummy_vlm_server:main"
+openfish-dummy-vlm-client = "app.testing.dummy_vlm_client:main"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 

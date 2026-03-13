@@ -16,11 +16,24 @@ This file is shared context for agents working in this repo. Read it before maki
 - `pytest` for tests.
 
 ## Architecture Summary
-- `app/main.py`: FastAPI entrypoint, page route, healthcheck, and `/api/analyze`.
+- `app/main.py`: FastAPI entrypoint, page route, healthcheck, `/api/analyze`, and `/api/decide`.
 - `app/vlm_client.py`: OpenAI-compatible VLM client in Python.
 - `app/parser.py`: strict JSON extraction and validation path for model output.
+- `app/poker`: canonical poker-domain models for snapshots, events, state, profiles, and decision context.
+- `app/poker/solver.py`: request/response models for solver-backed decisions.
+- `app/agent/tools.py`: deterministic tool wrappers used by the decision layer.
+- `app/services/event_diff.py`: turns sequential snapshots into ordered hand events.
+- `app/services/state_reducer.py`: reduces events into canonical hand state.
+- `app/services/context_builder.py`: builds model-ready temporal reasoning payloads.
+- `app/services/solver_builder.py`: converts `HandState` into TexasSolver command input.
+- `app/services/solver_parser.py`: parses root-node TexasSolver strategies for the hero combo.
+- `app/services/texassolver_wrapper.py`: runs TexasSolver or mock mode and caches outputs.
+- `app/services/decision_agent.py`: orchestrates tool use and returns a recommendation plus a tool trace.
+- `app/testing/dummy_vlm_server.py`: OpenAI-compatible fake VLM server for testing.
+- `app/testing/dummy_vlm_client.py`: helper client and CLI for driving dummy VLM scenarios.
 - `app/static`: browser JavaScript and CSS.
 - `app/templates`: server-rendered HTML shell.
+- `prompts/system_prompts.md`: canonical example system prompts for OpenFish modes.
 - Current capture implementation still uses `navigator.mediaDevices.getDisplayMedia()` in the browser, so the user must approve a browser picker and choose the screen, window, or tab to analyze.
 - Monitor selection is only hintable from the app. The browser still owns the picker and the final display choice.
 
@@ -45,6 +58,21 @@ This file is shared context for agents working in this repo. Read it before maki
   - Default: `gpt-4.1-mini`
 - `VLM_TIMEOUT_MS`
   - Default: `20000`
+- When testing with the dummy VLM server, point `VLM_BASE_URL` at `http://127.0.0.1:8010` and use a model/scenario such as `dummy-plan`.
+- `SOLVER_MODE`
+  - Default: `mock`
+  - `mock` keeps the decision path testable without a local TexasSolver install.
+  - `texassolver` runs the actual console solver.
+- `TEXASSOLVER_BIN`
+  - Path to the TexasSolver `console_solver` binary.
+- `TEXASSOLVER_RESOURCE_DIR`
+  - Path to the matching TexasSolver `resources` directory.
+- `SOLVER_TIMEOUT_MS`
+  - Default: `120000`
+- `SOLVER_CACHE_DIR`
+  - Default: `.openfish/solver-cache`
+- `SOLVER_WORK_DIR`
+  - Default: `.openfish/solver-runs`
 
 ## Current Workflow
 1. Launch the browser UI.
@@ -55,6 +83,25 @@ This file is shared context for agents working in this repo. Read it before maki
 6. The backend calls the configured VLM endpoint with a fixed planning prompt.
 7. The response is parsed as strict JSON and validated against the baseline schema.
 8. The UI renders the screenshot preview, plan suggestion, and raw JSON debug output.
+
+## Dummy VLM Workflow
+1. Start `openfish-dummy-vlm`.
+2. Set `VLM_BASE_URL=http://127.0.0.1:8010`.
+3. Set `VLM_MODEL` to a scenario such as `dummy-plan` or `dummy-schema-error`.
+4. Run the normal OpenFish analyze flow or call the helper client.
+
+## Solver Workflow
+1. Build or receive a canonical `HandState`.
+2. Supply hero cards plus IP and OOP ranges.
+3. Call `/api/decide`.
+4. The decision agent runs tools to:
+   - read the hand state
+   - load opponent profiles
+   - build decision context
+   - compute pot odds
+   - build a TexasSolver spot
+   - run the solver tool
+5. The endpoint returns a solver-backed recommendation and a `tool_trace`.
 
 ## JSON Contract
 ```py
@@ -89,6 +136,8 @@ class PlanSuggestion(BaseModel):
 - Endpoint switching between mock, local, and remote OpenAI-compatible backends
 - Saved transcripts and observations for debugging and future training data
 - Later poker-specific interpretation schemas, after the visual analysis shell is stable
+- Wire `TableSnapshot -> HandEvent -> HandState -> DecisionContext` into a live decision endpoint
+- Add child-node traversal so solver recommendations can follow within-street betting history, not only the root node
 
 ## Decision Log
 - 2026-03-12: Baseline app stack chosen as Electron + React + TypeScript + Vite.
@@ -104,3 +153,7 @@ class PlanSuggestion(BaseModel):
 - 2026-03-13: The README title and project identity were updated to `🐟 OpenFish - Personal Ai Poker Assistant`.
 - 2026-03-13: Browser capture now explicitly prefers monitor sharing and includes monitor surfaces in the picker, but web apps still cannot pre-select a specific display for the user.
 - 2026-03-13: Branch `codex/python_dev` rewrites the app mainly in Python using FastAPI, while keeping browser capture in JavaScript because screen capture still requires client-side browser APIs.
+- 2026-03-13: Example system prompts were added in `prompts/system_prompts.md` for planning, state extraction, coaching, and strict OCR-style observation.
+- 2026-03-13: A temporal reasoning foundation was added under `app/poker` and `app/services` to support history-aware decision making across variable table sizes and stack depths.
+- 2026-03-13: TexasSolver was integrated as a deterministic tool through a command-file wrapper, cached runs, root-node strategy parsing, and a new `/api/decide` endpoint.
+- 2026-03-13: A dummy OpenAI-compatible VLM server/client pair was added for testing the analyze path and error scenarios without a real model endpoint.

@@ -7,8 +7,10 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from app.services.decision_agent import decide_with_tools
 from app.errors import AppError
 from app.models import AnalysisRequest, AnalysisResult
+from app.poker.solver import DecisionRequest, DecisionResponse
 from app.vlm_client import request_plan_suggestion
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -41,3 +43,8 @@ async def health() -> dict[str, str]:
 async def analyze(request: AnalysisRequest) -> AnalysisResult:
     plan, raw_response = await request_plan_suggestion(request.image.data_url)
     return AnalysisResult(image=request.image, plan=plan, rawResponse=raw_response)
+
+
+@app.post("/api/decide", response_model=DecisionResponse)
+async def decide(request: DecisionRequest) -> DecisionResponse:
+    return await decide_with_tools(request)

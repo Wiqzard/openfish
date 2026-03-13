@@ -9,4 +9,6 @@ __pycache__
 *.pyc
 .pytest_cache
 .vite
+.openfish
 .DS_Store
+.pytest_cache
