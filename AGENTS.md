@@ -157,3 +157,4 @@ class PlanSuggestion(BaseModel):
 - 2026-03-13: A temporal reasoning foundation was added under `app/poker` and `app/services` to support history-aware decision making across variable table sizes and stack depths.
 - 2026-03-13: TexasSolver was integrated as a deterministic tool through a command-file wrapper, cached runs, root-node strategy parsing, and a new `/api/decide` endpoint.
 - 2026-03-13: A dummy OpenAI-compatible VLM server/client pair was added for testing the analyze path and error scenarios without a real model endpoint.
+- 2026-03-13: Live TexasSolver tests confirmed the current wrapper works end to end for real root-node OOP postflop spots; IP and child-node decisions remain unsupported until tree traversal is implemented.

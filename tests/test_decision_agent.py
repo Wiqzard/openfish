@@ -26,7 +26,7 @@ def test_decide_endpoint_returns_mock_solver_recommendation() -> None:
                 "players": {
                     "hero": {
                         "player_id": "hero",
-                        "seat_label": "BTN",
+                        "seat_label": "BB",
                         "is_hero": True,
                         "stack_start": 97.5,
                         "stack_current": 97.5,
@@ -34,11 +34,11 @@ def test_decide_endpoint_returns_mock_solver_recommendation() -> None:
                         "contributed_total": 2.5,
                         "in_hand": True,
                         "all_in": False,
-                        "position": "BTN",
+                        "position": "BB",
                     },
                     "villain": {
                         "player_id": "villain",
-                        "seat_label": "BB",
+                        "seat_label": "BTN",
                         "is_hero": False,
                         "stack_start": 100,
                         "stack_current": 100,
@@ -46,19 +46,19 @@ def test_decide_endpoint_returns_mock_solver_recommendation() -> None:
                         "contributed_total": 2.5,
                         "in_hand": True,
                         "all_in": False,
-                        "position": "BB",
+                        "position": "BTN",
                     },
                 },
                 "action_history": [
-                    "hero raised by 2.5",
-                    "villain called 2.5",
+                    "villain raised by 2.5",
+                    "hero called 2.5",
                 ],
                 "uncertainties": [],
             },
             "hero_cards": ["As", "Kd"],
-            "hero_position": "ip",
+            "hero_position": "oop",
             "ip_range": "AA,KK,QQ,AK,AQs,AJs,KQs",
-            "oop_range": "QQ,JJ,TT,99,AQ,AJ,KQ",
+            "oop_range": "QQ,JJ,TT,99,AQ,AJ,KQ,AK",
             "opponent_profiles": [
                 OpponentProfile(
                     player_id="villain",
@@ -124,3 +124,49 @@ def test_decide_endpoint_rejects_preflop_solver_request() -> None:
 
     assert response.status_code == 400
     assert response.json()["code"] == "SOLVER_UNSUPPORTED_STREET"
+
+
+def test_decide_endpoint_rejects_ip_root_requests_until_node_traversal_exists() -> None:
+    response = client.post(
+        "/api/decide",
+        json={
+            "state": {
+                "hand_id": "hand-50",
+                "table_id": "table-1",
+                "table_size": 2,
+                "street": "flop",
+                "board_cards": ["Ah", "8d", "4c"],
+                "pot_chips": 5.5,
+                "hero_player_id": "hero",
+                "active_player_id": "villain",
+                "legal_actions": ["call", "raise", "fold"],
+                "to_call_chips": 2.0,
+                "min_raise_chips": 6.0,
+                "players": {
+                    "hero": {
+                        "player_id": "hero",
+                        "is_hero": True,
+                        "stack_current": 95,
+                        "in_hand": True,
+                        "all_in": False,
+                    },
+                    "villain": {
+                        "player_id": "villain",
+                        "is_hero": False,
+                        "stack_current": 98,
+                        "in_hand": True,
+                        "all_in": False,
+                    },
+                },
+                "action_history": ["hero checked", "villain bet 2"],
+                "uncertainties": [],
+            },
+            "hero_cards": ["As", "Kd"],
+            "hero_position": "ip",
+            "ip_range": "AA,KK,QQ,AK",
+            "oop_range": "QQ,JJ,TT,AQ",
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.json()["code"] == "SOLVER_NODE_PATH_UNSUPPORTED"

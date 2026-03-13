@@ -290,4 +290,4 @@ Current limitation:
 
 - the first implementation solves the root node for the provided street
 - it does not yet traverse down the TexasSolver child tree for within-street action sequences
-- so it is best suited to street-entry decisions until node-path mapping is added
+- so it is best suited to OOP street-entry decisions until node-path mapping is added

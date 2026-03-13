@@ -56,6 +56,12 @@ def build_solver_spot_from_state(
             "TexasSolver integration currently supports postflop streets only.",
         )
 
+    if hero_position != "oop":
+        raise AppError(
+            "SOLVER_NODE_PATH_UNSUPPORTED",
+            "Current TexasSolver integration only supports root-node street-entry spots where hero is OOP. IP decisions require child-node traversal, which is not implemented yet.",
+        )
+
     if state.pot_chips is None:
         raise AppError(
             "SOLVER_STATE_ERROR",

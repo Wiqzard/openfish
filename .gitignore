@@ -12,3 +12,4 @@ __pycache__
 .openfish
 .DS_Store
 .pytest_cache
+TexasSolver
